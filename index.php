@@ -1,6 +1,15 @@
-<!-- index.php -->
 <?php
 include "conexion.php";
+
+// Parámetros de paginación
+$registros_por_pagina = 5;
+$pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$inicio = ($pagina > 1) ? ($pagina * $registros_por_pagina - $registros_por_pagina) : 0;
+
+// Total de registros de clientes
+$total_resultado = $conn->query("SELECT COUNT(*) as total FROM clientes");
+$total_filas = $total_resultado->fetch_assoc()['total'];
+$total_paginas = ceil($total_filas / $registros_por_pagina);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -32,7 +41,7 @@ include "conexion.php";
     </thead>
     <tbody>
       <?php
-      $result = $conn->query("SELECT * FROM clientes");
+      $result = $conn->query("SELECT * FROM clientes LIMIT $inicio, $registros_por_pagina");
       while ($row = $result->fetch_assoc()) {
         echo "<tr>
                 <td>{$row['cedula']}</td>
@@ -48,6 +57,17 @@ include "conexion.php";
       ?>
     </tbody>
   </table>
+
+  <!-- Paginación -->
+  <nav>
+    <ul class="pagination">
+      <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
+        <li class="page-item <?= $i == $pagina ? 'active' : '' ?>">
+          <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
+        </li>
+      <?php endfor; ?>
+    </ul>
+  </nav>
 
   <h2 class="mt-5 mb-4">Pedidos</h2>
   <a href="agregar_pedido.php" class="btn btn-success mb-3">Agregar Pedido</a>

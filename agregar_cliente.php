@@ -12,7 +12,7 @@ include "conexion.php";
 <div class="container mt-5">
   <h1>Agregar Cliente</h1>
   <form method="post">
-    <input class="form-control mb-2" type="text" name="cedula" placeholder="Cédula" required>
+    <input class="form-control mb-2" type="text" name="cedula" placeholder="Cédula" pattern="\\d+" title="Solo se permiten números" required>
     <input class="form-control mb-2" type="text" name="nombre" placeholder="Nombre" required>
     <input class="form-control mb-2" type="text" name="apellido" placeholder="Apellido" required>
     <input class="form-control mb-2" type="text" name="direccion" placeholder="Dirección" required>
@@ -27,8 +27,8 @@ include "conexion.php";
     $apellido = $_POST['apellido'];
     $direccion = $_POST['direccion'];
 
-    if (!$conn) {
-      echo '<div class="alert alert-danger mt-3">Error: No se pudo conectar a la base de datos.</div>';
+    if (!is_numeric($cedula)) {
+      echo '<div class="alert alert-danger mt-3">La cédula debe contener solo números.</div>';
     } else {
       if ($conn->query("INSERT INTO clientes (cedula, nombre, apellido, direccion) VALUES ('$cedula','$nombre','$apellido','$direccion')")) {
         header("Location: index.php?msg=Cliente agregado exitosamente");
